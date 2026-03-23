@@ -609,6 +609,7 @@ const state = {
     phase: "overview",
     activeNav: "dashboard",
     activeLessonId: null,
+    searchQuery: "",
     questionIndex: 0,
     hearts: 5,
     lessonXp: 0,
@@ -666,6 +667,9 @@ const elements = {
     mascotMood: document.getElementById("mascot-mood"),
     mascotLine: document.getElementById("mascot-line"),
     mascotTip: document.getElementById("mascot-tip"),
+    lessonSearchInput: document.getElementById("lesson-search-input"),
+    lessonSearchClear: document.getElementById("lesson-search-clear"),
+    searchStatus: document.getElementById("search-status"),
 };
 
 function loadTheme() {
@@ -798,6 +802,110 @@ function getAchievementList() {
 
 function getUnlockedAchievementCount() {
     return getAchievementList().filter((achievement) => achievement.unlocked).length;
+}
+
+function normalizeSearchQuery(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function getLessonSearchHaystack(lesson) {
+    const questionSearchText = lesson.questions.flatMap((question) => [
+        question.prompt,
+        question.before,
+        question.after,
+        question.explanation,
+        ...(Array.isArray(question.options) ? question.options : []),
+        ...(Array.isArray(question.bank) ? question.bank : []),
+        ...(Array.isArray(question.accepted) ? question.accepted : []),
+        ...(Array.isArray(question.solution) ? question.solution : []),
+    ]);
+
+    return normalizeSearchQuery(
+        [
+            lesson.id,
+            lesson.title,
+            lesson.subtitle,
+            lesson.overview,
+            lesson.previewCode,
+            ...lesson.goals,
+            ...questionSearchText,
+        ].join(" "),
+    );
+}
+
+function getFilteredLessons() {
+    const normalizedQuery = normalizeSearchQuery(state.searchQuery);
+
+    if (!normalizedQuery) {
+        return lessons;
+    }
+
+    const terms = normalizedQuery.split(" ").filter(Boolean);
+    return lessons.filter((lesson) => {
+        const haystack = getLessonSearchHaystack(lesson);
+        return terms.every((term) => haystack.includes(term));
+    });
+}
+
+function updateSearchUi() {
+    const normalizedQuery = normalizeSearchQuery(state.searchQuery);
+    const matchCount = getFilteredLessons().length;
+
+    if (elements.lessonSearchInput && elements.lessonSearchInput.value !== state.searchQuery) {
+        elements.lessonSearchInput.value = state.searchQuery;
+    }
+
+    if (elements.lessonSearchClear) {
+        elements.lessonSearchClear.hidden = !normalizedQuery;
+    }
+
+    if (!elements.searchStatus) {
+        return;
+    }
+
+    if (!normalizedQuery) {
+        elements.searchStatus.textContent = "Live course dashboard";
+        return;
+    }
+
+    if (matchCount === 0) {
+        elements.searchStatus.textContent = "No matches";
+        return;
+    }
+
+    elements.searchStatus.textContent = `${matchCount} matching lesson${matchCount === 1 ? "" : "s"}`;
+}
+
+function applyLessonSearch(query) {
+    const nextQuery = String(query || "");
+    if (state.searchQuery === nextQuery) {
+        updateSearchUi();
+        return;
+    }
+
+    state.searchQuery = nextQuery;
+
+    if (state.phase === "overview") {
+        const filteredLessons = getFilteredLessons();
+        const selectedLessonIsVisible = filteredLessons.some((lesson) => lesson.id === state.selectedLessonId);
+
+        if (!selectedLessonIsVisible) {
+            const firstUnlockedMatch = filteredLessons.find((lesson) => isLessonUnlocked(lesson.id));
+            if (firstUnlockedMatch) {
+                state.selectedLessonId = firstUnlockedMatch.id;
+            }
+        }
+    }
+
+    render();
+}
+
+function clearLessonSearch() {
+    applyLessonSearch("");
+    elements.lessonSearchInput?.focus();
 }
 
 function resetRunState() {
@@ -1785,8 +1893,9 @@ function getLessonPathRenderKey() {
         .sort(([leftId], [rightId]) => leftId.localeCompare(rightId))
         .map(([lessonId, score]) => `${lessonId}:${score.grade || "C"}:${Number(score.xp) || 0}`)
         .join("|");
+    const searchKey = normalizeSearchQuery(state.searchQuery);
 
-    return `${state.selectedLessonId}:${state.phase === "lesson" ? "locked" : "free"}:${unlockedKey}:${scoresKey}`;
+    return `${state.selectedLessonId}:${state.phase === "lesson" ? "locked" : "free"}:${unlockedKey}:${scoresKey}:${searchKey}`;
 }
 
 function getBoardMotionKey() {
@@ -1952,7 +2061,20 @@ function updateHeader() {
 function renderLessonPath() {
     elements.lessonPath.innerHTML = "";
 
-    lessons.forEach((lesson) => {
+    const visibleLessons = getFilteredLessons();
+
+    if (visibleLessons.length === 0) {
+        const query = escapeHtml(state.searchQuery.trim());
+        elements.lessonPath.innerHTML = `
+            <div class="lesson-path-empty">
+                <strong>No lessons match "${query}"</strong>
+                <span>Try a topic like functions, loops, table, or print.</span>
+            </div>
+        `;
+        return;
+    }
+
+    visibleLessons.forEach((lesson) => {
         const button = document.createElement("button");
         const unlocked = isLessonUnlocked(lesson.id);
         const score = profile.lessonScores[lesson.id];
@@ -2017,9 +2139,20 @@ function renderActivityFeed() {
         return;
     }
 
+    const visibleLessons = getFilteredLessons();
+    if (visibleLessons.length === 0) {
+        elements.activityFeed.innerHTML = `
+            <div class="activity-empty">
+                <strong>No activity cards match this search yet.</strong>
+                <span>Clear the search field or try a broader Lua keyword.</span>
+            </div>
+        `;
+        return;
+    }
+
     const highlightedLessonId = state.phase === "overview" ? state.selectedLessonId : getActiveLesson().id;
 
-    elements.activityFeed.innerHTML = lessons
+    elements.activityFeed.innerHTML = visibleLessons
         .map((lesson) => {
             const unlocked = isLessonUnlocked(lesson.id);
             const score = profile.lessonScores[lesson.id];
@@ -2691,6 +2824,7 @@ function render() {
 
         syncUiState();
         updateHeader();
+        updateSearchUi();
 
         if (state.phase === "overview") {
             renderOverview();
@@ -2759,6 +2893,23 @@ if (elements.navActivity) {
         openOverview(state.selectedLessonId, "activity");
         document.getElementById("activity-feed")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+}
+
+if (elements.lessonSearchInput) {
+    elements.lessonSearchInput.addEventListener("input", (event) => {
+        applyLessonSearch(event.target.value);
+    });
+
+    elements.lessonSearchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && normalizeSearchQuery(state.searchQuery)) {
+            event.preventDefault();
+            clearLessonSearch();
+        }
+    });
+}
+
+if (elements.lessonSearchClear) {
+    elements.lessonSearchClear.addEventListener("click", clearLessonSearch);
 }
 
 render();
