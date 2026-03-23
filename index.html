@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lua Quest | Learn Lua Coding</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="scene-glow glow-one"></div>
+    <div class="scene-glow glow-two"></div>
+
+    <main class="app-shell">
+        <aside class="path-panel">
+            <div class="brand-row">
+                <div class="brand-block">
+                    <div class="brand-mark">LQ</div>
+                    <div>
+                        <p class="eyebrow">Code Dashboard</p>
+                        <h1>Lua Quest</h1>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="rail-nav" aria-label="Workspace sections">
+                <span class="rail-label">Workspace</span>
+                <a class="rail-link is-active" id="nav-dashboard" href="#stage-panel">
+                    <span class="rail-link-icon">01</span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="rail-link" id="nav-lessons" href="#lesson-path">
+                    <span class="rail-link-icon">02</span>
+                    <span>Lessons</span>
+                </a>
+                <a class="rail-link" id="nav-activity" href="#activity-feed">
+                    <span class="rail-link-icon">03</span>
+                    <span>Activity</span>
+                </a>
+                <button class="rail-link" id="open-profile-nav" type="button">
+                    <span class="rail-link-icon">04</span>
+                    <span>Profile</span>
+                </button>
+            </nav>
+
+            <section class="path-section">
+                <div class="section-heading">
+                    <span class="section-dot"></span>
+                    <h3>Course Map</h3>
+                </div>
+                <div id="lesson-path" class="lesson-path"></div>
+            </section>
+
+            <div class="sidebar-footer">
+                <p class="sidebar-note">
+                    A dark analytics-style shell around the same lesson engine, streaks, hearts, and saved progress.
+                </p>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch between light and dark theme">
+                    <span class="theme-toggle-copy">Palette</span>
+                    <strong class="theme-toggle-state" id="theme-label">Dark UI</strong>
+                </button>
+            </div>
+        </aside>
+
+        <section class="stage-panel" id="stage-panel">
+            <header class="utility-bar">
+                <div class="utility-search" aria-hidden="true">
+                    <span class="utility-search-icon"></span>
+                    <span>Search for lessons, snippets, or Lua syntax...</span>
+                </div>
+                <div class="utility-actions">
+                    <span class="utility-pill">Live course dashboard</span>
+                </div>
+            </header>
+
+            <section class="dashboard-hero">
+                <article class="signal-card">
+                    <div class="signal-head">
+                        <div class="stage-heading">
+                            <p class="eyebrow">Daily Coding Run</p>
+                            <div class="stage-title-row">
+                                <h2 id="stage-title">Choose a skill and start practicing.</h2>
+                                <span class="live-badge" id="stage-badge">Practice Mode</span>
+                            </div>
+                            <p class="stage-copy" id="stage-copy">
+                                Quick coding rounds with streaks, hearts, and unlockable lessons.
+                            </p>
+                        </div>
+                        <span class="signal-pill">Lua 5.4 Path</span>
+                    </div>
+
+                    <div class="chart-shell" aria-hidden="true">
+                        <div class="chart-scale">
+                            <span>8K</span>
+                            <span>6K</span>
+                            <span>4K</span>
+                            <span>2K</span>
+                            <span>0</span>
+                        </div>
+                        <div class="chart-plot">
+                            <svg class="chart-svg" viewBox="0 0 520 220" role="presentation">
+                                <defs>
+                                    <linearGradient id="chart-line" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#7088ff"></stop>
+                                        <stop offset="52%" stop-color="#ff4b95"></stop>
+                                        <stop offset="100%" stop-color="#46dfd5"></stop>
+                                    </linearGradient>
+                                    <linearGradient id="chart-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#ff4b95" stop-opacity="0.34"></stop>
+                                        <stop offset="100%" stop-color="#ff4b95" stop-opacity="0"></stop>
+                                    </linearGradient>
+                                    <filter id="chart-glow">
+                                        <feGaussianBlur stdDeviation="5" result="coloredBlur"></feGaussianBlur>
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur"></feMergeNode>
+                                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <path
+                                    d="M 8 182 C 44 150, 72 126, 106 130 S 172 182, 210 154 S 282 98, 318 116 S 392 182, 432 144 S 488 94, 512 104 L 512 220 L 8 220 Z"
+                                    fill="url(#chart-fill)"
+                                ></path>
+                                <path
+                                    d="M 8 182 C 44 150, 72 126, 106 130 S 172 182, 210 154 S 282 98, 318 116 S 392 182, 432 144 S 488 94, 512 104"
+                                    fill="none"
+                                    stroke="url(#chart-line)"
+                                    stroke-width="6"
+                                    stroke-linecap="round"
+                                    filter="url(#chart-glow)"
+                                ></path>
+                                <circle cx="106" cy="130" r="6" fill="#ff7fb8"></circle>
+                                <circle cx="318" cy="116" r="7" fill="#46dfd5"></circle>
+                                <circle cx="512" cy="104" r="7" fill="#7088ff"></circle>
+                            </svg>
+                            <div class="chart-labels">
+                                <span>Skill 1</span>
+                                <span>Skill 2</span>
+                                <span>Skill 3</span>
+                                <span>Skill 4</span>
+                                <span>Skill 5</span>
+                                <span>Mastery</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stage-metrics">
+                        <div class="pill">
+                            <span>Hearts</span>
+                            <strong id="hearts-count">5</strong>
+                        </div>
+                        <div class="pill">
+                            <span>Lesson XP</span>
+                            <strong id="lesson-xp">0</strong>
+                        </div>
+                        <div class="pill">
+                            <span>Combo</span>
+                            <strong id="combo-count">0</strong>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="quest-card">
+                    <p class="eyebrow">Current Skill</p>
+                    <h2 id="quest-title">Learn Lua coding one bite at a time.</h2>
+                    <p id="quest-copy">
+                        Pick a lesson to move from variables and control flow into reusable Lua code.
+                    </p>
+
+                    <div class="progress-meta">
+                        <span>Run completion</span>
+                        <span>Saved locally in your browser</span>
+                    </div>
+                    <div class="progress-track" aria-hidden="true">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+
+                    <div class="quest-chip-row">
+                        <span class="quest-chip">5 hearts per run</span>
+                        <span class="quest-chip">Combo bonus XP</span>
+                        <span class="quest-chip">Sequential unlocks</span>
+                    </div>
+                </article>
+            </section>
+
+            <section id="board" class="board" aria-live="polite"></section>
+        </section>
+
+        <aside class="insight-panel">
+            <section class="user-card" id="user-card">
+                <div class="user-avatar avatar-badge" id="user-avatar" data-avatar-theme="aurora">LQ</div>
+                <div class="user-copy">
+                    <p class="eyebrow">Local Account</p>
+                    <h3 id="user-display-name">Guest Explorer</h3>
+                    <p class="user-meta" id="user-meta">Sign in to save a profile, achievements, and course progress.</p>
+                </div>
+                <div class="user-actions">
+                    <button class="secondary-btn" id="open-profile-btn" type="button">Open Profile</button>
+                    <button class="secondary-btn" id="logout-btn" type="button">Log Out</button>
+                </div>
+            </section>
+
+            <section class="mascot-card" id="mascot-card" data-mood="ready" aria-live="polite">
+                <div class="mascot-avatar" id="mascot-avatar" aria-hidden="true">
+                    <span class="mascot-orbit orbit-one"></span>
+                    <span class="mascot-orbit orbit-two"></span>
+                    <div class="mascot-body">
+                        <span class="mascot-tail"></span>
+                        <span class="mascot-wing wing-left"></span>
+                        <span class="mascot-wing wing-right"></span>
+                        <span class="mascot-horn horn-left"></span>
+                        <span class="mascot-horn horn-right"></span>
+                        <span class="mascot-snout"></span>
+                        <span class="mascot-belly"></span>
+                        <span class="mascot-eye eye-left"></span>
+                        <span class="mascot-eye eye-right"></span>
+                        <span class="mascot-mouth"></span>
+                        <span class="mascot-core">LQ</span>
+                    </div>
+                </div>
+
+                <div class="mascot-dialog">
+                    <div class="mascot-heading">
+                        <div>
+                            <p class="eyebrow">Run Guide</p>
+                            <h3 id="mascot-name">Luno</h3>
+                        </div>
+                        <span class="mascot-status" id="mascot-mood">Fresh Flight</span>
+                    </div>
+                    <p class="mascot-line" id="mascot-line">I guard the course and keep your coding run moving.</p>
+                    <p class="mascot-tip" id="mascot-tip">Pick a lesson and I will help you spot the syntax worth breathing fire on.</p>
+                </div>
+            </section>
+
+            <section class="profile-card">
+                <div class="metric-card">
+                    <span>Total XP</span>
+                    <strong id="total-xp">0</strong>
+                </div>
+                <div class="metric-card">
+                    <span>Best Streak</span>
+                    <strong id="best-streak">0</strong>
+                </div>
+                <div class="metric-card">
+                    <span>Skills Cleared</span>
+                    <strong id="skills-cleared">0</strong>
+                </div>
+            </section>
+
+            <section class="activity-panel">
+                <div class="section-heading">
+                    <span class="section-dot"></span>
+                    <h3>Recent Activity</h3>
+                </div>
+                <div id="activity-feed" class="activity-feed"></div>
+            </section>
+        </aside>
+    </main>
+
+    <div class="auth-screen" id="auth-screen" hidden></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
