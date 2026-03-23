@@ -1643,8 +1643,10 @@ html[data-theme="light"] .chart-shell {
     inset: 0;
     z-index: 30;
     display: grid;
-    place-items: center;
+    place-items: start center;
     padding: 28px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background:
         radial-gradient(circle at top left, rgba(112, 136, 255, 0.2), transparent 30%),
         radial-gradient(circle at bottom right, rgba(255, 75, 149, 0.16), transparent 28%),
@@ -1658,6 +1660,13 @@ html[data-theme="light"] .chart-shell {
 
 .auth-shell {
     width: min(980px, 100%);
+    min-height: 100%;
+    display: grid;
+    align-items: center;
+}
+
+.auth-shell > * {
+    width: 100%;
 }
 
 .auth-card {
